@@ -100,13 +100,13 @@ paavo.aggr.kunta.pono <- function(d, i, vars = paavo.vars)
 paavo <- list()
 ### Let's compute averages and sums for different aggregation levels (original 5, 3 and 2 numbers)
 
-paavo$data <- bind_rows(mutate(Data, pono.level=5),
+paavo$counts <- bind_rows(mutate(Data, pono.level=5),
                       paavo.aggr(Data, 3),
                       paavo.aggr(Data, 2))
 
 
 # Counts to shares (counts normalised by sum)
-paavo$data_shaers <- paavo$data %>%
+paavo$data_shaers <- paavo$proportions %>%
   select(-starts_with("he_0")) %>%
   select(-starts_with("he_1")) %>%
   select(-starts_with("he_2")) %>%

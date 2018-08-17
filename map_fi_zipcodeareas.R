@@ -2,7 +2,7 @@ library(ggplot2)
 library(dplyr)
 
 map_fi_postinumero <- 
-  function(df, title.label = NA, viridis.option = "C", color.limits = c(NA,NA)) {
+  function(df, title.label = NA, viridis.option = "E", color.limits = c(NA,NA)) {
     
    if (!exists("postinumero.map")) 
      postinumero.map <<- readRDS(file=here::here("pono_polygons_by_Duukkis_CC_BY4.0_20150102.rds"))

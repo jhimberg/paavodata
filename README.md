@@ -14,8 +14,8 @@ a list consisting of data frames
 
 ### 
 
-pono.level (2,3, or 5) indicates the aggreattion level
-vuosi (year) the year of Paavo data. Note that the actual statistics is older - the year (statistics is from the end of year) is found in Statistics Finland documentation (and also in paavo.vars)
+  - pono.level (2,3, or 5) indicates the aggreation level
+  -  vuosi (year) the year of Paavo data. Note that the actual statistics is older - the year (statistics is from the end of year) is found in Statistics Finland documentation (and also in paavo.vars)
 
 ### counts
 

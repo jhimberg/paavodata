@@ -104,8 +104,6 @@ paavo$data <- bind_rows(mutate(Data, pono.level=5),
                       paavo.aggr(Data, 3),
                       paavo.aggr(Data, 2))
 
-#                      paavo.aggr.kunta.pono(Data, 3),
-#                      paavo.aggr.kunta.pono(Data, 2))
 
 # Counts to shares (counts normalised by sum)
 paavo$data_shaers <- paavo$data %>%

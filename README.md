@@ -22,7 +22,8 @@ Aggredation is weighted. The weighting attribute (usually total number of people
  - `.$counts`
    - original data for `pono.level == 5`
    - three aggredates version of the data for each year
- - `.$proportions counts in `.$counts` normalised into proportions. The normalising variable is indicated in   - `.$paavo.var` information on variables, normalisation and offset between the year (version) of Paavo-data and the actual year of data collection
+ - `.$proportions` counts in .$counts` normalised into proportions. The normalising variable is indicated in `.$paavo.vars`  
+ - `.$paavo.var` information on variables, normalisation and offset between the year (version) of Paavo-data and the actual year of data collection
 
 (Note the data frame contains also a few continuous variables such as average age or income, these are averaged not summed)
 

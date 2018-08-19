@@ -8,8 +8,6 @@ Data: https://www.stat.fi/tup/paavo/paavon_aineistokuvaukset_en.html
 `createPaavodata.R` collects data from all years and stores them into a list of data frames and stores the 
 results into local directory as a list consisting of data frames. 
 
-
-
   - original Paavo-data attributes are documented by Statistics Finland https://www.stat.fi/tup/paavo/paavon_aineistokuvaukset_en.html
   - Additional attributes
     - Column `pono.level` (2,3, or 5) indicates the aggreation level

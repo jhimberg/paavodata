@@ -106,18 +106,12 @@ paavo$counts <- bind_rows(mutate(Data, pono.level=5),
 
 
 # Counts to shares (counts normalised by sum)
+
 paavo$proportions <- paavo$counts %>%
-  select(-starts_with("he_0")) %>%
-  select(-starts_with("he_1")) %>%
-  select(-starts_with("he_2")) %>%
-  select(-starts_with("he_3")) %>%
-  select(-starts_with("he_4")) %>%
-  select(-starts_with("he_5")) %>%
-  select(-starts_with("he_6")) %>%
-  select(-starts_with("he_7")) %>%
-  select(-starts_with("he_8")) %>%
   select(-nimi, -kuntano) %>%
-  mutate(naiset.osuus = he_naiset / (he_miehet + he_naiset)) %>%
+  mutate(he_naiset = he_naiset / he_vakiy,
+         he_miehet = he_miehet / he_vakiy) %>%
+  mutate_at(vars(matches("he_[0-9]")), funs(. / he_vakiy)) %>% 
   mutate_at(vars(starts_with("ko_"), -ko_ika18y), funs(. / ko_ika18y)) %>%
   mutate_at(vars(hr_pi_tul, hr_ke_tul, hr_hy_tul, hr_ovy), funs(. / hr_tuy)) %>%
   mutate_at(vars(starts_with("pt_"), -pt_vakiy), funs(. / pt_vakiy)) %>%

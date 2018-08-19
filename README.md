@@ -12,8 +12,8 @@ results into local directory as a list consisting of data frames.
 
   - original Paavo-data attributes are documented by Statistics Finland https://www.stat.fi/tup/paavo/paavon_aineistokuvaukset_en.html
   - Additional attributes
-  - Column `pono.level` (2,3, or 5) indicates the aggreation level
-  -  `vuosi` (year) the year of Paavo data. Note that the actual statistics is older - the year (statistics is from the end of year) is found in Statistics Finland documentation (and also in paavo.vars)
+    - Column `pono.level` (2,3, or 5) indicates the aggreation level
+    -  `vuosi` (year) the year of Paavo data. Note that the actual statistics is older - the year (statistics is from the end of year) is found in Statistics Finland documentation (and also in paavo.vars)
 
 Aggredation is weighted. The weighting attribute (usually total number of people) is found in `.$paavo.vars`.
 
@@ -22,7 +22,7 @@ Aggredation is weighted. The weighting attribute (usually total number of people
  - `.$counts`
    - original data for `pono.level == 5`
    - three aggredates version of the data for each year
- - `.$proportions counts in `.$counts` normalised into proportions. The normalising variable is indicated in   -`.$paavo.var` information on variables, normalisation and offset between the year (version) of Paavo-data and the actual year of data collection
+ - `.$proportions counts in `.$counts` normalised into proportions. The normalising variable is indicated in   - `.$paavo.var` information on variables, normalisation and offset between the year (version) of Paavo-data and the actual year of data collection
 
 (Note the data frame contains also a few continuous variables such as average age or income, these are averaged not summed)
 

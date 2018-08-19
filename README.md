@@ -19,7 +19,7 @@ a list consisting of data frames
 
 ### counts
 
-three summed/ averaged version of the data ofr each year
+three summed / averaged version of the data ofr each year
  original areas (5 digits)
  areas based on 3 first and 2 first digits of the zip code
 

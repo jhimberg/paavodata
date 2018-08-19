@@ -106,7 +106,7 @@ paavo$counts <- bind_rows(mutate(Data, pono.level=5),
 
 
 # Counts to shares (counts normalised by sum)
-paavo$data_shaers <- paavo$proportions %>%
+paavo$proportions <- paavo$counts %>%
   select(-starts_with("he_0")) %>%
   select(-starts_with("he_1")) %>%
   select(-starts_with("he_2")) %>%

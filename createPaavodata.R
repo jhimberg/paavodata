@@ -102,7 +102,8 @@ paavo <- list()
 
 paavo$counts <- bind_rows(mutate(Data, pono.level=5),
                       paavo.aggr(Data, 3),
-                      paavo.aggr(Data, 2))
+                      paavo.aggr(Data, 2)) %>% 
+  ungroup
 
 
 # Counts to shares (counts normalised by sum)
@@ -120,7 +121,8 @@ paavo$proportions <- paavo$counts %>%
             funs(. / te_taly)) %>%
   mutate_at(vars(starts_with("tr_"), -tr_kuty, -tr_ktu, -tr_mtu),
             funs(. / tr_kuty)) %>%
-  mutate_at(vars(starts_with("ra_"), -ra_raky, -ra_as_kpa), funs(. / ra_raky)) 
+  mutate_at(vars(starts_with("ra_"), -ra_raky, -ra_as_kpa), funs(. / ra_raky)) %>% 
+  ungroup
 
 # Variables 
 paavo$vars <- paavo.vars

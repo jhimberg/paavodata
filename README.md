@@ -13,7 +13,10 @@ results into local directory as a list consisting of data frames. Collects now d
     - Column `pono.level` (2,3, or 5) indicates the aggreation level
     -  `vuosi` (year) the year of Paavo data. Note that the actual statistics is older - the year (statistics is from the end of year) is found in Statistics Finland documentation (and also in paavo.vars)
 
-Aggredation is weighted. The weighting attribute (usually total number of people) is found in `.$paavo.vars`.
+Aggregation is weighted. The weighting attribute (usually total number of people) is found in `.$paavo.vars`.
+
+Note: *Paavo data 2015-2016 have some variables like "average age" or "average income" =zero on zip code areas with no people.* Averaging (should) go right because of the weighting, but the value itself on 5 digit areas is of course, wrong, should be NA. 
+
 
 ### Result Data frame fields
 

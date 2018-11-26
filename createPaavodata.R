@@ -6,14 +6,14 @@ library(stringr)
 ## Function gets Paavo data from statistics Finland
 ## This data contains also the polygons needed for drawing the polygons but it's not used here
 
-get.geo <-function(data.name = "tilastointialueet:kunta4500k_2017", name.ext = ".shp") {
-  data.file = paste(tempdir(), "/", str_split_fixed(data.name, pattern=":", n = 2)[2], sep = "")
-  url.head <- "http://geo.stat.fi/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName="
-  url.tail <- "&outputFormat=SHAPE-ZIP"
-  zip.file <- paste(tempdir(), "/", "shape.zip", sep = "")
-  curl::curl_download(paste(url.head, data.name, url.tail, sep = ""), zip.file)
-  unzip(zip.file, exdir = tempdir())  
-  geodata <- sf::st_read(paste(tempdir(), "/", str_split_fixed(data.name, pattern=":",n=2)[2], name.ext, sep=""), 
+get_geo <-function(data_name = "tilastointialueet:kunta4500k_2017", name_ext = ".shp") {
+  data_file = paste(tempdir(), "/", str_split_fixed(data_name, pattern=":", n = 2)[2], sep = "")
+  url_head <- "http://geo.stat.fi/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName="
+  url_tail <- "&outputFormat=SHAPE-ZIP"
+  zip_file <- paste(tempdir(), "/", "shape.zip", sep = "")
+  curl::curl_download(paste(url_head, data_name, url_tail, sep = ""), zip_file)
+  unzip(zip_file, exdir = tempdir())  
+  geodata <- sf::st_read(paste(tempdir(), "/", str_split_fixed(data_name, pattern=":",n=2)[2], name_ext, sep=""), 
                          quiet=TRUE, 
                          stringsAsFactors=FALSE) %>% 
     as.data.frame(., stringsAsFactors=FALSE) %>% 
@@ -23,10 +23,10 @@ get.geo <-function(data.name = "tilastointialueet:kunta4500k_2017", name.ext = "
 }
 
 # Paavo-data (Zip code demographics data)
-Data <- bind_rows(get.geo("postialue:pno_tilasto_2018"), 
-                  get.geo("postialue:pno_tilasto_2017"),
-                  get.geo("postialue:pno_tilasto_2016"),
-                  get.geo("postialue:pno_tilasto_2015")) %>%
+Data <- bind_rows(get_geo("postialue:pno_tilasto_2018"), 
+                  get_geo("postialue:pno_tilasto_2017"),
+                  get_geo("postialue:pno_tilasto_2016"),
+                  get_geo("postialue:pno_tilasto_2015")) %>%
   select(-namn, 
          -objectid) %>% 
   rename(pono = posti_alue, 
@@ -34,7 +34,7 @@ Data <- bind_rows(get.geo("postialue:pno_tilasto_2018"),
   mutate_if(is.numeric, function(x) ifelse(x == -1, NA, x))
 
 # Variable names etc. for Paavo-data
-paavo.vars <- read.csv(file = "paavo.koodit.txt", 
+paavo_vars <- read.csv(file = "paavo.koodit.txt", 
                        sep=";",
                        fileEncoding = "MAC",
                        stringsAsFactors = FALSE)  
@@ -49,8 +49,8 @@ wmean <- function(x, y)
 sum_finite <- function(x) ifelse(all(!is.finite(x)), NA, sum(x, na.rm=TRUE))
 
 
-# Aggregate by zip according to paavo.vars
-paavo.aggr <- function(d, i, vars = paavo.vars)
+# Aggregate by zip according to paavo_vars
+paavo_aggr <- function(d, i, vars = paavo_vars)
   group_by(d, vuosi, pono = str_sub(pono, 1, i)) %>% 
   select(pono, vuosi, one_of(filter(vars, aggr=="sum")$koodi)) %>% 
   summarise_all(sum_finite) %>% 
@@ -67,13 +67,13 @@ paavo.aggr <- function(d, i, vars = paavo.vars)
                         euref_x = wmean(euref_x, pinta_ala),
                         euref_y = wmean(euref_y, pinta_ala),
                         kuntano = NA,
-                        pono.level = i,
+                        pono_level = i,
                         nimi = NA
                         ),
             by=c("vuosi", "pono")) 
 
 # Aggregate by municipality + zip code combination (not used now)
-paavo.aggr.kunta.pono <- function(d, i, vars = paavo.vars)
+paavo_aggr_kunta_pono <- function(d, i, vars = paavo_vars)
   group_by(d, vuosi, pono = str_sub(pono, 1, i), kuntano) %>% 
   select(pono, 
          vuosi, 
@@ -92,7 +92,7 @@ paavo.aggr.kunta.pono <- function(d, i, vars = paavo.vars)
                         ra_as_kpa = wmean(ra_as_kpa, ra_asunn),
                         euref_x = wmean(euref_x, pinta_ala),
                         euref_y = wmean(euref_y, pinta_ala),
-                        pono.level =i*10+i,
+                        pono_level =i*10+i,
                         nimi = NA
               ),
             by=c("vuosi","pono", "kuntano")) 
@@ -100,9 +100,9 @@ paavo.aggr.kunta.pono <- function(d, i, vars = paavo.vars)
 paavo <- list()
 ### Let's compute averages and sums for different aggregation levels (original 5, 3 and 2 numbers)
 
-paavo$counts <- bind_rows(mutate(Data, pono.level=5),
-                      paavo.aggr(Data, 3),
-                      paavo.aggr(Data, 2)) %>% 
+paavo$counts <- bind_rows(mutate(Data, pono_level=5),
+                      paavo_aggr(Data, 3),
+                      paavo_aggr(Data, 2)) %>% 
   ungroup
 
 
@@ -125,6 +125,6 @@ paavo$proportions <- paavo$counts %>%
   ungroup
 
 # Variables 
-paavo$vars <- paavo.vars
+paavo$vars <- paavo_vars
 
 saveRDS(paavo, file=here::here("paavodata.rds"))

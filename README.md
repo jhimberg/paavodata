@@ -5,8 +5,8 @@ Data: https://www.stat.fi/tup/paavo/paavon_aineistokuvaukset_en.html
 
 ## Fetching and averaging Paavo data
 
-`createPaavodata.R` collects data from all years and stores them into a list of data frames and stores the 
-results into local directory as a list consisting of data frames. 
+`createPaavodata.R` collects data from Statistics Finland and stores them into a list of data frames and stores the 
+results into local directory as a list consisting of data frames. Collects now data for 2015-2018. Adding new year is easy (see code) if the data format stays the same. 
 
   - original Paavo-data attributes are documented by Statistics Finland https://www.stat.fi/tup/paavo/paavon_aineistokuvaukset_en.html
   - Additional attributes
@@ -17,7 +17,7 @@ Aggredation is weighted. The weighting attribute (usually total number of people
 
 ### Result Data frame fields
 
-Output contains the following fields
+Output `paavo` contains the following fields
  - `.$counts`
    - original data for `pono.level == 5`
    - three aggredates version of the data for each year

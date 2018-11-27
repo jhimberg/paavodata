@@ -2,6 +2,29 @@ library(ggplot2)
 library(dplyr)
 library(ggiraph)
 
+# kuntano is the official number of the city/commune (kunta)
+# this function maps it to the name (valid on 2018)
+fi_commune_number2name <- function(kuntano) {
+  if (!exists("kuntano2name")) 
+    kuntano2name <<- readRDS(file=here::here("map_and_names", "kuntanumeromap2018.rds"))
+  
+  plyr::mapvalues(as.integer(kuntano), 
+                  as.integer(kuntano2name$kuntano.old), 
+                  kuntano2name$kunta, 
+                  warn_missing = FALSE) %>% 
+    iconv(.,to="UTF-8") %>% return
+}
+
+# produces names for aggregated areas 
+collapse_names <- function(digits = 3, df = paavo$counts) 
+  filter(df, pono_level == 5) %>% 
+  select(pono, kuntano, vuosi, nimi) %>% 
+  mutate(kunta=fi_commune_number2name(kuntano), 
+         pono=str_sub(pono, 1, digits)) %>% 
+  group_by(pono, vuosi) %>% 
+  summarise(kunta = paste(sort(unique(kunta)), collapse=", "), 
+            nimi=paste(sort(unique(nimi)), collapse=", "))
+
 map_fi_postinumero <- 
   function(df, title_label = NA, colorscale = scale_fill_viridis_c, ...) {
     # df: two columns from Paavo-data: pono and some data columns
@@ -11,7 +34,7 @@ map_fi_postinumero <-
     
    
     if (!exists("postinumero_map")) 
-      postinumero_map <<- readRDS(file=here::here("pono_polygons_by_Duukkis_CC_BY4.0_20150102.rds"))
+      postinumero_map <<- readRDS(file=here::here("map_and_names", "pono_polygons_by_Duukkis_CC_BY4.0_20150102.rds"))
     
     if(dim(df)[2] != 2) stop("df must have two columns.")
     
@@ -51,7 +74,7 @@ map_fi_postinumero_interactive <-
     " ...: options for the colorscale"
     
     if (!exists("postinumero_map")) 
-      postinumero_map <<- readRDS(file=here::here("pono_polygons_by_Duukkis_CC_BY4.0_20150102.rds"))
+      postinumero_map <<- readRDS(file=here::here("map_and_names", "pono_polygons_by_Duukkis_CC_BY4.0_20150102.rds"))
     
     if(dim(df)[2] != 3) stop("df must have three columns.")
     

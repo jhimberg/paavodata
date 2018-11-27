@@ -34,7 +34,7 @@ Data <- bind_rows(get_geo("postialue:pno_tilasto_2018"),
   mutate_if(is.numeric, function(x) ifelse(x == -1, NA, x))
 
 # Variable names etc. for Paavo-data
-paavo_vars <- read.csv(file = "paavo.koodit.txt", 
+paavo_vars <- read.csv(file = here::here("map_and_names", "paavo.koodit.txt"), 
                        sep=";",
                        fileEncoding = "MAC",
                        stringsAsFactors = FALSE)  
@@ -105,11 +105,9 @@ paavo$counts <- bind_rows(mutate(Data, pono_level=5),
                       paavo_aggr(Data, 2)) %>% 
   ungroup
 
-
 # Counts to shares (counts normalised by sum)
 
 paavo$proportions <- paavo$counts %>%
-  select(-nimi, -kuntano) %>%
   mutate(he_naiset = he_naiset / he_vakiy,
          he_miehet = he_miehet / he_vakiy) %>%
   mutate_at(vars(matches("he_[0-9]")), funs(. / he_vakiy)) %>% 
@@ -122,9 +120,23 @@ paavo$proportions <- paavo$counts %>%
   mutate_at(vars(starts_with("tr_"), -tr_kuty, -tr_ktu, -tr_mtu),
             funs(. / tr_kuty)) %>%
   mutate_at(vars(starts_with("ra_"), -ra_raky, -ra_as_kpa), funs(. / ra_raky)) %>% 
-  ungroup
+  ungroup 
 
 # Variables 
 paavo$vars <- paavo_vars
+
+# If base count is zero, variables which are not counts (like average age etc.) are set to zero instead of NA at older data (2015, 2016)
+# This is not meaningful.  Let's set these to NA for consistency
+
+cc <- filter(paavo$vars, aggr == "mean")[c("weight", "koodi")]
+cc$i <- seq(1, dim(cc)[1])
+
+for (i in cc$i) 
+  paavo$counts[, cc[cc$i == i, "koodi"]] <- 
+  ifelse(paavo$counts[, cc[cc$i == i, "weight"]] == 0, 
+         NA, 
+         paavo$counts[, cc[cc$i == i, "koodi"]])
+
+
 
 saveRDS(paavo, file=here::here("paavodata.rds"))

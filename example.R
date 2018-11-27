@@ -1,7 +1,8 @@
 
 
-# source("createPaavodata") get Paavo-data (should be in project directory anyway)
-# 
+# Create first Paavo-data 
+# source("createPaavodata.R") 
+
 # Initialise graph functions 
 source("utilities.R")
 
@@ -9,15 +10,21 @@ paavo <- readRDS(here::here("paavodata.rds"))
 
 ## Set some variables 
 
+# Paavo year is the "version" of Paavo data. The actual statistical year varies depending on the attribute
 paavo_year <- 2018
+
+# paavo$vars contains info on the columns in data (have name variable_code)
 variable_code <- "tr_ktu"
 variable_name <- filter(paavo$vars, koodi == variable_code)$nimi
+
+# Actual statistical year
 variable_year <- paavo_year + filter(paavo$vars, koodi == variable_code)$paavo.vuosi.offset
 
-# approximate lat-long centerpoints for zip code areas (pono)
+# Approximate lat-long centerpoints for zip code areas (pono) (for labelling)
+# the Paavo data contains coords on a different coordinate system
 latlong <- group_by(postinumero_map, pono) %>% summarise(long=mean(long), lat=mean(lat))
 
-# Example 1: Helsinki, viridis colorscale (paavo$counts => counts try also paavo$proportions)
+#### Example 1: Helsinki, viridis colorscale (paavo$counts => counts try also paavo$proportions)
 
 df <- filter(paavo$counts, grepl("^00", pono) & pono_level == 5 & vuosi == paavo_year) %>%
 
@@ -26,7 +33,7 @@ map_fi_postinumero(df,
                    option = "B",
                    na.value = "white") + 
  
-# Example 2: Helsinki, viridis colorscale + labels
+#### Example 2: Helsinki, viridis colorscale + labels
 
 df <- filter(paavo$counts, grepl("^00", pono) & pono_level == 5 & vuosi == paavo_year) %>%
   select_("pono", variable_code, "nimi") %>%
@@ -42,8 +49,7 @@ select_(df, "pono", variable_code) %>%
             color="grey50", 
             angle=10)
 
-
-# Example 3 capital region, PuBu colorscale, with tootip & collapsed area names 
+#### Example 3: capital region, brewer colorscale
 
 # Let's create the tooltip text for the selected variable
 df <- filter(paavo$counts, grepl("^00|^01|^02", pono) & pono_level == 5 & vuosi == paavo_year) %>% 

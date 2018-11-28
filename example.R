@@ -71,20 +71,22 @@ map_fi_postinumero_interactive(df,
 
 
 # Let's create the tooltip text for the selected variable
-df <- filter(paavo$proportions, grepl("^00|^01|^02", pono) & pono_level == 3 & vuosi == paavo_year) %>% 
-  select(pono, nimi, pt_elakel)
+df <- filter(paavo$proportions, grepl(".", pono) & pono_level == 3 & vuosi == paavo_year) %>% 
+  select(pono, pt_elakel)
 
 
+df <- left_join(df, collapse_names(digits = 3, df = paavo$proportions), by="pono") %>% 
+  mutate(nimi = paste0(toupper(kunta), " \n", nimi))
 
-df$tooltip = paste0(df$pono, " (", df$nimi, ") \nvalue = ", as.character(df[[variable_code]])) 
+df$tooltip = paste0(df$pono, "XX", " \n", df$nimi, " \nValue = ", as.character(round(100*df$pt_elakel)), "%") 
 df <- select(df, pono, tooltip, pt_elakel)
 
 map_fi_postinumero_interactive(df, 
-                               title_label = paste(variable_year, variable_name, "(areas by zip codes)"),
+                               title_label = paste(variable_year, variable_name, "(areas by zip codes, 3 digits)"),
                                colorscale = scale_fill_distiller, 
-                               type="seq", 
+                               type = "seq", 
                                palette="YlOrRd",
                                direction = 1) %>% 
   girafe(ggobj = .) %>% 
-  girafe_options(x=., opts_zoom(min=.5, max=5))
+  girafe_options(x=., opts_zoom(min = .5, max = 5))
 

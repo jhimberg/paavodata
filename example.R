@@ -54,6 +54,7 @@ select_(df, "pono", variable_code) %>%
 # Let's create the tooltip text for the selected variable
 df <- filter(paavo$counts, grepl("^00|^01|^02", pono) & pono_level == 5 & vuosi == paavo_year) %>% 
   select_("pono", "nimi", variable_code)
+
 df$tooltip = paste0(df$pono, " (", df$nimi, ") \nvalue = ", as.character(df[[variable_code]])) 
 df <- select_(df, "pono", "tooltip", variable_code)
 
@@ -66,6 +67,24 @@ map_fi_postinumero_interactive(df,
   girafe(ggobj = .) %>% 
   girafe_options(x=., opts_zoom(min=.5, max=5))
 
+# Let's take proportion for the number of those getting pension 
 
 
+# Let's create the tooltip text for the selected variable
+df <- filter(paavo$proportions, grepl("^00|^01|^02", pono) & pono_level == 3 & vuosi == paavo_year) %>% 
+  select(pono, nimi, pt_elakel)
+
+
+
+df$tooltip = paste0(df$pono, " (", df$nimi, ") \nvalue = ", as.character(df[[variable_code]])) 
+df <- select(df, pono, tooltip, pt_elakel)
+
+map_fi_postinumero_interactive(df, 
+                               title_label = paste(variable_year, variable_name, "(areas by zip codes)"),
+                               colorscale = scale_fill_distiller, 
+                               type="seq", 
+                               palette="YlOrRd",
+                               direction = 1) %>% 
+  girafe(ggobj = .) %>% 
+  girafe_options(x=., opts_zoom(min=.5, max=5))
 

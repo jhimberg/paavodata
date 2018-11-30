@@ -12,6 +12,7 @@ paavo <- readRDS(here::here("paavodata.rds"))
 
 # Paavo year is the "version" of Paavo data. The actual statistical year varies depending on the attribute
 paavo_year <- 2018
+zip_digits <- 5
 
 # paavo$vars contains info on the columns in data (have name variable_code)
 variable_code <- "tr_ktu"
@@ -27,16 +28,20 @@ latlong <- group_by(postinumero_map, pono) %>% summarise(long=mean(long), lat=me
 
 #### Example 1: Helsinki, viridis colorscale (paavo$counts => counts try also paavo$proportions)
 
-df <- filter(paavo$counts, grepl("^00", pono) & pono_level == 5 & vuosi == paavo_year) %>%
+df <- filter(paavo$counts, 
+             grepl("^00", pono) & 
+               pono_level == zip_digits & 
+               vuosi == paavo_year) %>%
+  select_("pono", variable_code)
 
 map_fi_postinumero(df,
                    title_label = paste(variable_year, variable_name, "(areas by zip codes)"),
                    option = "B",
-                   na.value = "white") + 
+                   na.value = "white") 
  
 #### Example 2: Helsinki, viridis colorscale + labels
 
-df <- filter(paavo$counts, grepl("^00", pono) & pono_level == 5 & vuosi == paavo_year) %>%
+df <- filter(paavo$counts, grepl("^00", pono) & pono_level == zip_digits & vuosi == paavo_year) %>%
   select_("pono", variable_code, "nimi") %>%
   left_join(., latlong, by = "pono")
 
@@ -50,17 +55,20 @@ select_(df, "pono", variable_code) %>%
             color="grey50", 
             angle=10)
 
-#### Example 3: capital region, brewer colorscale
+#### Example 3: capital region, brewer colorscale (interactive)
 
 # Let's create the tooltip text for the selected variable
-df <- filter(paavo$counts, grepl("^00|^01|^02", pono) & pono_level == 5 & vuosi == paavo_year) %>% 
+df <- filter(paavo$counts, 
+             grepl("^00|^01|^02", pono) & 
+               pono_level == zip_digits & 
+               vuosi == paavo_year) %>% 
   select_("pono", "nimi", variable_code)
 
 df$tooltip = paste0(df$pono, " (", df$nimi, ") \nvalue = ", as.character(df[[variable_code]])) 
 df <- select_(df, "pono", "tooltip", variable_code)
 
 map_fi_postinumero_interactive(df, 
-                                 title_label = paste(variable_year, variable_name, "(areas by zip codes)"),
+                                 title_label = paste(variable_year, variable_name, "\n (zip code areas:",  zip_digits, " digits)"),
                                  colorscale = scale_fill_distiller, 
                                  type="seq", 
                                  palette="YlOrRd",
@@ -69,21 +77,32 @@ map_fi_postinumero_interactive(df,
   girafe_options(x=., opts_zoom(min=.5, max=5))
 
 
-## Example 4: Turku area, proportions
+## Example 4: Turku area, proportions (interactive). Make name labels for 
+
+paavo_year <- 2018
+zip_digits <- 3
+variable_code <- "ra_ke"
+variable_year <- paavo_year + filter(paavo$vars, koodi == variable_code)$paavo.vuosi.offset
+variable_name <- filter(paavo$vars, koodi == variable_code)$nimi
 
 # Let's create the tooltip text for the selected variable
-df <- filter(paavo$proportions, grepl("^2[0,1,3,4,5,6]", pono) & pono_level == 3 & vuosi == 2018) %>% 
-  select(pono, pt_tyott)
+df <- filter(paavo$proportions, 
+             grepl("^2[0,1,3-9]", pono) & 
+               pono_level == zip_digits & 
+               vuosi == paavo_year) %>% 
+  select_("pono", variable_code)
 
-
-df <- left_join(df, collapse_names(digits = 3, df = paavo$proportions), by="pono") %>% 
+df <- left_join(df, 
+                collapse_names(digits = 3, df = paavo$proportions), 
+                by="pono") %>% 
   mutate(nimi = paste0(toupper(kunta), " \n", nimi))
 
-df$tooltip = paste0(df$pono, "XX \n", df$nimi, " \nValue = ", as.character(round(100*df$pt_tyott,1)), "%") 
-df <- select(df, pono, tooltip, pt_tyott)
+df$tooltip = paste0(df$pono, "XX \n", df$nimi, " \nValue = ", as.character(round(100 * df[[variable_code]], 1)), "%") 
+df <- select_(df, "pono", "tooltip", variable_code)
 
 map_fi_postinumero_interactive(df, 
-                               title_label = paste("Share of unempolyed in surroundings of Turku \n (2015, zip code areas, 3 first digits)"),
+                               title_label = paste0(variable_name, " (", variable_year, ") \n zip code areas: ", 
+                                                   zip_digits, " digits"),
                                colorscale = scale_fill_distiller, 
                                type = "seq", 
                                palette="YlOrRd",

@@ -52,7 +52,7 @@ sum_finite <- function(x) ifelse(all(!is.finite(x)), NA, sum(x, na.rm=TRUE))
 # Aggregate by zip according to paavo_vars
 paavo_aggr <- function(d, i, vars = paavo_vars)
   group_by(d, vuosi, pono = str_sub(pono, 1, i)) %>% 
-  select(pono, vuosi, one_of(filter(vars, aggr=="sum")$koodi)) %>% 
+  select(pono, vuosi, one_of(filter(vars, aggr == "sum")$koodi)) %>% 
   summarise_all(sum_finite) %>% 
   left_join(.,
             group_by(d, vuosi, pono=str_sub(pono, 1, i)) %>% 
@@ -73,29 +73,29 @@ paavo_aggr <- function(d, i, vars = paavo_vars)
             by=c("vuosi", "pono")) 
 
 # Aggregate by municipality + zip code combination (not used now)
-paavo_aggr_kunta_pono <- function(d, i, vars = paavo_vars)
-  group_by(d, vuosi, pono = str_sub(pono, 1, i), kuntano) %>% 
-  select(pono, 
-         vuosi, 
-         one_of(filter(vars, aggr == "sum")$koodi), 
-         kuntano) %>% 
-  summarise_all(sum_finite) %>% 
-  left_join(.,
-            group_by(d, vuosi, pono = str_sub(pono, 1, i), kuntano) %>% 
-              summarise(he_kika = wmean(he_kika, he_vakiy),
-                        hr_ktu = wmean(hr_ktu, hr_tuy),
-                        hr_mtu = wmean(hr_mtu, hr_tuy),
-                        te_takk = wmean(te_takk, te_taly),
-                        te_as_valj = wmean(te_as_valj, te_taly),
-                        tr_ktu = wmean(tr_ktu, tr_kuty),
-                        tr_mtu = wmean(tr_mtu, tr_kuty),
-                        ra_as_kpa = wmean(ra_as_kpa, ra_asunn),
-                        euref_x = wmean(euref_x, pinta_ala),
-                        euref_y = wmean(euref_y, pinta_ala),
-                        pono_level =i*10+i,
-                        nimi = NA
-              ),
-            by=c("vuosi","pono", "kuntano")) 
+#paavo_aggr_kunta_pono <- function(d, i, vars = paavo_vars)
+#  group_by(d, vuosi, pono = str_sub(pono, 1, i), kuntano) %>% 
+#  select(pono, 
+#         vuosi, 
+#         one_of(filter(vars, aggr == "sum")$koodi), 
+#         kuntano) %>% 
+#  summarise_all(sum_finite) %>% 
+#  left_join(.,
+#            group_by(d, vuosi, pono = str_sub(pono, 1, i), kuntano) %>% 
+#              summarise(he_kika = wmean(he_kika, he_vakiy),
+#                        hr_ktu = wmean(hr_ktu, hr_tuy),
+#                        hr_mtu = wmean(hr_mtu, hr_tuy),
+#                        te_takk = wmean(te_takk, te_taly),
+#                        te_as_valj = wmean(te_as_valj, te_taly),
+#                        tr_ktu = wmean(tr_ktu, tr_kuty),
+#                       tr_mtu = wmean(tr_mtu, tr_kuty),
+#                        ra_as_kpa = wmean(ra_as_kpa, ra_asunn),
+#                        euref_x = wmean(euref_x, pinta_ala),
+#                        euref_y = wmean(euref_y, pinta_ala),
+#                        pono_level = i*10+i,
+#                        nimi = NA
+#              ),
+#            by=c("vuosi","pono", "kuntano")) 
 
 paavo <- list()
 ### Let's compute averages and sums for different aggregation levels (original 5, 3 and 2 numbers)

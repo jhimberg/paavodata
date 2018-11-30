@@ -65,7 +65,6 @@ map_fi_postinumero <-
     return(p)
   }
 
-
 map_fi_postinumero_interactive <- 
   function(df, title_label = NA,  colorscale = scale_fill_viridis_c, ...) {
     # df: two columns from Paavo-data: 'pono' and some data column

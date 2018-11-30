@@ -17,25 +17,35 @@ Aggregation is weighted. The weighting attribute (usually total number of people
 
 Note: *Paavo data 2015-2016 have some variables like "average age" or "average income" =zero on zip code areas with no people.* Averaging (should) go right because of the weighting, but the value itself on 5 digit areas is of course, wrong, should be NA. 
 
-
 ## Result Data frame fields
 
 Output `paavo` contains the following fields
  - `.$counts`
    - original data for `pono.level == 5`
-   - three aggredates version of the data for each year
- - `.$proportions` contains `.$counts` normalised into proportions. The normalising variable is indicated in `.$paavo.vars`  
- - `.$paavo.var` information on variables, normalisation and offset between the year (=version) of Paavo-data and the *actual year of data collection* for the variable
+   - three aggregates version of the data for each year (use with caution!)
+ - `.$proportions` contains `.$counts` divided by total sum into proportions. The denominator is indicated in `.$paavo.vars`. 
+ Note: `ra_ke` is divided by `ra_ke`+`ra_raky`. Use with caution!
+ - `.$paavo.var` information on variables, normalisation and offset between the year (=version) of Paavo-data and the *actual year of data collection* for the variable.
 
-Note: the data frame contains also a few continuous variables such as average age or income, these are averaged not summed
+Note: the data frame contains also a few continuous variables such as average age or income, these are averaged, not summed.
 
-## Map
+## Some additional configuration files 
 
-There is an example (`utilities.R`) for plotting a map (using any of the aggregation levels) by `map_fi_zipcodeareas.R` using polygons in `map_and_names/pono_polygons_by_Duukkis_CCBY4.0_20150102.rds` (under Creative Commons CC BY 4.0). The zip code polygons from Duukkis http://www.palomaki.info/apps/pnro/ have been converted into a data frame that can be used by ggplot2 function `geom_polygon`. 
+### Variable explanations
+
+The offsets, variable explanations, and attribute names are in `map_and_names/paavo.koodit.txt`. This is an attempt to collect the information in https://www.stat.fi/tup/paavo/paavon_aineistokuvaukset_en.html . Note that this partly configures the computation of the sums and averages, partly that is done hard-wired in the code. 
+
+### Map
+
+There are example functions in `utilities.R` for plotting a map using any of the aggregation levels. They use polygons in `map_and_names/pono_polygons_by_Duukkis_CCBY4.0_20150102.rds` (under Creative Commons CC BY 4.0). The zip code polygons from Duukkis http://www.palomaki.info/apps/pnro/ have been converted into a data frame that can be used by ggplot2 function `geom_polygon`. 
 
   - Cons: It lacks some of the newer zipcodes. 
   - Pros: the polygons are reducted compared to the polygons that comes with Paavo-data: they contain a detailed map of archipelago / lake area and make rendering slow. 
   
+### Commune/city numbers 
+
+The number to name encoding of the communes and cities is in `map_and_names/kuntanumeromap2018.rds`.
+
 ## Examples
 
 Take a look and run `example.R` to see some plotting examples.

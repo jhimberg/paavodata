@@ -72,31 +72,6 @@ paavo_aggr <- function(d, i, vars = paavo_vars)
                         ),
             by=c("vuosi", "pono")) 
 
-# Aggregate by municipality + zip code combination (not used now)
-#paavo_aggr_kunta_pono <- function(d, i, vars = paavo_vars)
-#  group_by(d, vuosi, pono = str_sub(pono, 1, i), kuntano) %>% 
-#  select(pono, 
-#         vuosi, 
-#         one_of(filter(vars, aggr == "sum")$koodi), 
-#         kuntano) %>% 
-#  summarise_all(sum_finite) %>% 
-#  left_join(.,
-#            group_by(d, vuosi, pono = str_sub(pono, 1, i), kuntano) %>% 
-#              summarise(he_kika = wmean(he_kika, he_vakiy),
-#                        hr_ktu = wmean(hr_ktu, hr_tuy),
-#                        hr_mtu = wmean(hr_mtu, hr_tuy),
-#                        te_takk = wmean(te_takk, te_taly),
-#                        te_as_valj = wmean(te_as_valj, te_taly),
-#                        tr_ktu = wmean(tr_ktu, tr_kuty),
-#                       tr_mtu = wmean(tr_mtu, tr_kuty),
-#                        ra_as_kpa = wmean(ra_as_kpa, ra_asunn),
-#                        euref_x = wmean(euref_x, pinta_ala),
-#                        euref_y = wmean(euref_y, pinta_ala),
-#                        pono_level = i*10+i,
-#                        nimi = NA
-#              ),
-#            by=c("vuosi","pono", "kuntano")) 
-
 paavo <- list()
 ### Let's compute averages and sums for different aggregation levels (original 5, 3 and 2 numbers)
 
@@ -105,7 +80,7 @@ paavo$counts <- bind_rows(mutate(Data, pono_level=5),
                       paavo_aggr(Data, 2)) %>% 
   ungroup
 
-# Counts to shares (counts normalised by sum)
+# Calculate proportions
 
 paavo$proportions <- paavo$counts %>%
   mutate(he_naiset = he_naiset / he_vakiy,
@@ -115,11 +90,11 @@ paavo$proportions <- paavo$counts %>%
   mutate_at(vars(hr_pi_tul, hr_ke_tul, hr_hy_tul, hr_ovy), funs(. / hr_tuy)) %>%
   mutate_at(vars(starts_with("pt_"), -pt_vakiy), funs(. / pt_vakiy)) %>%
   mutate_at(vars(starts_with("tp_"), -tp_tyopy), funs(. / tp_tyopy)) %>%
-  mutate_at(vars(starts_with("te_"), -te_taly, -te_takk, -te_as_valj),
-            funs(. / te_taly)) %>%
-  mutate_at(vars(starts_with("tr_"), -tr_kuty, -tr_ktu, -tr_mtu),
-            funs(. / tr_kuty)) %>%
-  mutate_at(vars(starts_with("ra_"), -ra_raky, -ra_as_kpa), funs(. / ra_raky)) %>% 
+  mutate_at(vars(starts_with("te_"), -te_taly, -te_takk, -te_as_valj), funs(. / te_taly)) %>%
+  mutate_at(vars(starts_with("tr_"), -tr_kuty, -tr_ktu, -tr_mtu), funs(. / tr_kuty)) %>%
+  mutate_at(vars(one_of("ra_pt_as", "ra_kt_as")), funs(. / ra_asunn)) %>% 
+  mutate_at(vars(one_of("ra_muut", "ra_asrak")), funs(. / ra_raky)) %>%
+  mutate_at(vars(one_of("ra_ke")), funs(. / (ra_ke+ra_raky))) %>%
   ungroup 
 
 # Variables 

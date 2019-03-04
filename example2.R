@@ -3,9 +3,8 @@
 # source("migrate_paavodata".R") 
 
 # Initialise graph functions 
-source("utilities.R")
-
-paavo <- readRDS(here::here("paavodata.rds"))
+#source("utilities.R")
+#paavo <- readRDS(here::here("paavodata.rds"))
 
 #### Example 2: Helsinki, "duukkkis" polygons (2015), viridis colorscale + labels
 
@@ -25,7 +24,7 @@ variable_year <- paavo_year + filter(paavo$vars, koodi == variable_code)$paavo.v
 # approximate lat - long centerpoints for zip code areas (pono) (for labelling) are computed from map since
 # it has different coord. system
 
-latlong <- group_by(postinumero_map, pono) %>% 
+latlong <- group_by(readRDS(file=here("map_and_names", "pono_polygons_by_Duukkis_CC_BY4.0_20150102.rds")), pono) %>% 
   summarise(long = mean(long), lat = mean(lat))
 
 df <- filter(paavo$counts, grepl("^00", pono) & pono_level == zip_digits & vuosi == paavo_year) %>%
@@ -35,7 +34,7 @@ df <- filter(paavo$counts, grepl("^00", pono) & pono_level == zip_digits & vuosi
 select_(df, "pono", variable_code) %>%
   map_fi_zipcode(.,
                  title_label = paste(variable_year, variable_name, "(areas by zip codes)"),
-                 map="duukkis", 
+                 map = "duukkis", 
                  colorscale = scale_fill_distiller,
                  type = "seq", 
                  palette = "YlOrRd",

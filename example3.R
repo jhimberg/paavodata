@@ -4,7 +4,6 @@
 
 # Initialise graph functions 
 #source("utilities.R")
-
 #paavo <- readRDS(here::here("paavodata.rds"))
 
 #### Example 3: capital region, brewer colorscale (interactive)

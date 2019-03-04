@@ -3,8 +3,8 @@
 # source("migrate_paavodata.R") 
 
 # Initialise graph functions 
-#source("utilities.R")
-#paavo <- readRDS(here::here("paavodata.rds"))
+source("utilities.R")
+paavo <- readRDS(here::here("paavodata.rds"))
 
 #### Example 1: Helsinki, viridis colorscale (paavo$counts => counts try also paavo$proportions)
 

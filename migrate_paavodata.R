@@ -1,29 +1,32 @@
-library(here)
-library(dplyr)
-library(tidyr)
-library(stringr)
-
 ## Function gets Paavo data from statistics Finland
 ## This data contains also the polygons needed for drawing the polygons but it's not used here
 
-get_geo <-function(data_name = "tilastointialueet:kunta4500k_2017", name_ext = ".shp") {
-  data_file = paste(tempdir(), "/", str_split_fixed(data_name, pattern=":", n = 2)[2], sep = "")
+get_geo <-function(data_name = "tilastointialueet:kunta4500k_2017", name_ext = ".shp", get_geometry = FALSE) {
+  
+  data_file <- paste0(tempdir(), "/", str_split_fixed(data_name, pattern=":", n = 2)[2])
   url_head <- "http://geo.stat.fi/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName="
   url_tail <- "&outputFormat=SHAPE-ZIP"
   zip_file <- paste(tempdir(), "/", "shape.zip", sep = "")
   curl::curl_download(paste(url_head, data_name, url_tail, sep = ""), zip_file)
   unzip(zip_file, exdir = tempdir())  
-  geodata <- sf::st_read(paste(tempdir(), "/", str_split_fixed(data_name, pattern=":",n=2)[2], name_ext, sep=""), 
-                         quiet=TRUE, 
-                         stringsAsFactors=FALSE) %>% 
-    as.data.frame(., stringsAsFactors=FALSE) %>% 
-    mutate_if(is.character, function(x) iconv(x, from = "latin1", to="UTF-8")) %>%
-    select(-geometry) 
-  return(geodata)
+  
+  geodata <- sf::st_read(paste(tempdir(), "/", str_split_fixed(data_name, pattern = ":", n = 2)[2], name_ext, sep = ""), 
+                         quiet = TRUE, 
+                         stringsAsFactors = FALSE) %>% 
+    as.data.frame(., stringsAsFactors = FALSE) %>% 
+    mutate_if(is.character, function(x) iconv(x, from = "latin1", to="UTF-8"))
+  
+   geodata <- if (get_geometry) 
+     geodata 
+   else 
+     select(geodata, -geometry)
+  
+   return(geodata)
 }
 
 # Paavo-data (Zip code demographics data)
-Data <- bind_rows(get_geo("postialue:pno_tilasto_2018"), 
+Data <- bind_rows(get_geo("postialue:pno_tilasto_2019"),
+                  get_geo("postialue:pno_tilasto_2018"), 
                   get_geo("postialue:pno_tilasto_2017"),
                   get_geo("postialue:pno_tilasto_2016"),
                   get_geo("postialue:pno_tilasto_2015")) %>%
@@ -34,10 +37,12 @@ Data <- bind_rows(get_geo("postialue:pno_tilasto_2018"),
   mutate_if(is.numeric, function(x) ifelse(x == -1, NA, x))
 
 # Variable names etc. for Paavo-data
-paavo_vars <- read.csv(file = here::here("map_and_names", "paavo.koodit.txt"), 
+# paavo.koodit.txt is in Finnish (fileEncodin = "MAC")
+paavo_vars <- read.csv(file = here::here("map_and_names", "paavo.codes.txt"), 
                        sep=";",
-                       fileEncoding = "MAC",
-                       stringsAsFactors = FALSE)  
+                       fileEncoding = "UTF-8",
+                       stringsAsFactors = FALSE) %>% 
+  mutate(paavo.vuosi.offset=as.numeric(paavo.vuosi.offset))
 
 
 # Weighted mean (eg. by numer of people)
@@ -47,7 +52,6 @@ wmean <- function(x, y)
   
 # Sum which is NA if everythin is non-finite (inc. NaN and NA): deafult is 0
 sum_finite <- function(x) ifelse(all(!is.finite(x)), NA, sum(x, na.rm=TRUE))
-
 
 # Aggregate by zip according to paavo_vars
 paavo_aggr <- function(d, i, vars = paavo_vars)
@@ -75,12 +79,13 @@ paavo_aggr <- function(d, i, vars = paavo_vars)
 paavo <- list()
 ### Let's compute averages and sums for different aggregation levels (original 5, 3 and 2 numbers)
 
-paavo$counts <- bind_rows(mutate(Data, pono_level=5),
+paavo$counts <- bind_rows(mutate(Data, pono_level = 5),
                       paavo_aggr(Data, 3),
                       paavo_aggr(Data, 2)) %>% 
   ungroup
 
-# Calculate proportions
+# Define calculating proportions here 
+# PT variables seem to have changed 2019 
 
 paavo$proportions <- paavo$counts %>%
   mutate(he_naiset = he_naiset / he_vakiy,
@@ -111,7 +116,6 @@ for (i in cc$i)
   ifelse(paavo$counts[, cc[cc$i == i, "weight"]] == 0, 
          NA, 
          paavo$counts[, cc[cc$i == i, "koodi"]])
-
 
 
 saveRDS(paavo, file=here::here("paavodata.rds"))

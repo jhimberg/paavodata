@@ -1,12 +1,14 @@
 # paavodata
-Get Statistics Finland Paavo-demographics into a data frame. Aggregates to larger geographical areas (2 and 3 first digits) and computes proportions from the counts.
+
+Get Statistics Finland Paavo-demographics and visualise them. There are migration scripts for getting data into a data frame, aggregation of data to larger geographical areas (2 and 3 first digits), and computing weighted proportions / averages for the counts.  
+
+There are examples how to visualise the data by `ggplot` and preloaded maps (polygons) for zip code areas.
 
 Data: https://www.stat.fi/tup/paavo/paavon_aineistokuvaukset_en.html
 
 ## Fetching and averaging Paavo data
 
-`createPaavodata.R` collects data from Statistics Finland and stores them into a list of data frames and stores the 
-results into local directory as a list consisting of data frames. Collects now data for 2015-2018. Adding new year is easy (see code) if the data format stays the same. 
+`migrate_paavodata.R` collects data from Statistics Finland and stores them into a list of data frames and stores the results into local directory as a list consisting of data frames. Collects now data for 2015-2019. Adding new year is easy (see code) if the data format stays the same. 
 
   - original Paavo-data attributes are documented by Statistics Finland https://www.stat.fi/tup/paavo/paavon_aineistokuvaukset_en.html
   - Additional attributes
@@ -35,12 +37,13 @@ Note: the data frame contains also a few continuous variables such as average ag
 
 The offsets, variable explanations, and attribute names are in `map_and_names/paavo.koodit.txt`. This is an attempt to collect the information in https://www.stat.fi/tup/paavo/paavon_aineistokuvaukset_en.html . Note that this partly configures the computation of the sums and averages, partly that is done hard-wired in the code. 
 
-### Map
+### Maps
 
 There are example functions in `utilities.R` for plotting a map using any of the aggregation levels. They use polygons in `map_and_names/pono_polygons_by_Duukkis_CCBY4.0_20150102.rds` (under Creative Commons CC BY 4.0). The zip code polygons from Duukkis http://www.palomaki.info/apps/pnro/ have been converted into a data frame that can be used by ggplot2 function `geom_polygon`. 
 
-  - Cons: It lacks some of the newer zipcodes. 
+  - Cons: It is inconsisten with some of the newer zipcode areas 
   - Pros: the polygons are reducted compared to the polygons that comes with Paavo-data: they contain a detailed map of archipelago / lake area and make rendering slow. 
+  
   
 ### Commune/city numbers 
 

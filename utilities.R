@@ -1,9 +1,13 @@
-library(ggplot2)
+library(here)
+library(tidyr)
 library(dplyr)
+library(stringr)
+library(ggplot2)
 library(ggiraph)
 
 # kuntano is the official number of the city/commune (kunta)
 # this function maps it to the name (valid on 2018)
+
 fi_commune_number2name <- function(kuntano) {
   if (!exists("kuntano2name")) 
     kuntano2name <<- readRDS(file=here::here("map_and_names", "kuntanumeromap2018.rds"))
@@ -19,22 +23,48 @@ fi_commune_number2name <- function(kuntano) {
 collapse_names <- function(digits = 3, df = paavo$counts) 
   filter(df, pono_level == 5) %>% 
   select(pono, kuntano, vuosi, nimi) %>% 
-  mutate(kunta=fi_commune_number2name(kuntano), 
-         pono=str_sub(pono, 1, digits)) %>% 
+  mutate(kunta = fi_commune_number2name(kuntano), 
+         pono = str_sub(pono, 1, digits)) %>% 
   group_by(pono, vuosi) %>% 
-  summarise(kunta = paste(sort(unique(kunta)), collapse=", "), 
-            nimi=paste(sort(unique(nimi)), collapse=", "))
+  summarise(kunta = paste(sort(unique(kunta)), collapse = ", "), 
+            nimi = paste(sort(unique(nimi)), collapse = ", "))
 
-map_fi_postinumero <- 
-  function(df, title_label = NA, colorscale = scale_fill_viridis_c, ...) {
+zip_code_map <- function(map_name = "2019") {
+# Load the zip code area map polygon files to a list of dataframes and return a dataframe 
+
+  if (!(map_name %in% c("2015", "2016", "2017", "2018", "2019", "duukkis"))) stop("Map does not exist.")
+  
+  if (!exists("zipcode_maps")) {
+    zipcode_maps <<- list()
+    zipcode_maps[["duukkis"]] <<- readRDS(file=here::here("map_and_names", "pono_polygons_by_Duukkis_CC_BY4.0_20150102.rds"))
+    zipcode_maps[["2015"]] <<- readRDS(file=here::here("map_and_names", "statfi_reduced_ziparea_map_2015.rds"))
+    zipcode_maps[["2016"]] <<- readRDS(file=here::here("map_and_names", "statfi_reduced_ziparea_map_2016.rds"))
+    zipcode_maps[["2017"]] <<- readRDS(file=here::here("map_and_names", "statfi_reduced_ziparea_map_2017.rds"))
+    zipcode_maps[["2018"]] <<- readRDS(file=here::here("map_and_names", "statfi_reduced_ziparea_map_2018.rds"))
+    zipcode_maps[["2019"]] <<- readRDS(file=here::here("map_and_names", "statfi_reduced_ziparea_map_2019.rds"))
+  }
+  
+  zipcode_maps[[map_name]]
+}
+  
+map_fi_zipcode <- 
+  function(df, title_label = NA, map = "2019", colorscale = scale_fill_viridis_c, ...) {
     # df: two columns from Paavo-data: pono and some data columns
-    # title.label: string, deafault(NA) sets the variable name     
+    # title_label: string, deafault(NA) sets the variable name   
+    # map: "duukkis", "2015", "2016", "2017", "2018", or "2019" (default) or a polygon data frame 
     # colorscale: colorscale function, default: scale_fill_viridis_c
     " ...: options for the colorscale"
     
-   
-    if (!exists("postinumero_map")) 
-      postinumero_map <<- readRDS(file=here::here("map_and_names", "pono_polygons_by_Duukkis_CC_BY4.0_20150102.rds"))
+    # Get a map 
+    if (class(map) == "character") {
+      if (map == "duukkis") lat_long_ratio <- 2.1 else lat_long_ratio <- 1.0 
+      map <- zip_code_map(map) }
+    else
+      if (class(map) == "data.frame") 
+        lat_long_ratio <- 1.0
+      else
+        stop("Must be a string or a (polygon) data frame") 
+    
     
     if(dim(df)[2] != 2) stop("df must have two columns.")
     
@@ -50,10 +80,10 @@ map_fi_postinumero <-
     N_digits_pono <- stringr::str_length(df$pono[1])
     
     pono_map <- 
-      left_join(df, mutate(postinumero_map, pono = stringr::str_sub(pono, 1, N_digits_pono)), 
+      left_join(df, mutate(map, pono = stringr::str_sub(pono, 1, N_digits_pono)), 
                 by = c("pono"))
     
-    p <- ggplot(data = arrange(pono_map, order), aes(x = long, y = lat)) + 
+    p <- ggplot(data = pono_map, aes(x = long, y = lat)) + 
       geom_polygon(aes_string(fill = attr_to_plot, group = "group"), colour = NA) + 
       theme_void() +
       theme(legend.title = element_blank()) + 
@@ -61,20 +91,27 @@ map_fi_postinumero <-
     
     p <- p + colorscale(...)
     
-    p <- p + coord_equal(ratio=2.1) 
+    p <- p + coord_equal(ratio = lat_long_ratio) 
     return(p)
   }
 
-map_fi_postinumero_interactive <- 
-  function(df, title_label = NA,  colorscale = scale_fill_viridis_c, ...) {
+map_fi_zipcode_interactive <- 
+  function(df, title_label = NA, map = "2019", colorscale = scale_fill_viridis_c, ...) {
     # df: two columns from Paavo-data: 'pono' and some data column
     # title.label: string, deafault(NA) sets the variable name     
     # colorscale: colorscale function, default: scale_fill_viridis_c
     " ...: options for the colorscale"
     
-    if (!exists("postinumero_map")) 
-      postinumero_map <<- readRDS(file=here::here("map_and_names", "pono_polygons_by_Duukkis_CC_BY4.0_20150102.rds"))
-    
+    # Get a map 
+    if (class(map) == "character") {
+      if (map == "duukkis") lat_long_ratio <- 2.1 else lat_long_ratio <- 1.0 
+      map <- zip_code_map(map) }
+    else
+      if (class(map) == "data.frame") 
+        lat_long_ratio <- 1.0
+      else
+        stop("Must be a string or a (polygon) data frame") 
+      
     if(dim(df)[2] != 3) stop("df must have three columns.")
     
     attr_to_plot <- setdiff(names(df), c("pono", "tooltip")) 
@@ -90,10 +127,10 @@ map_fi_postinumero_interactive <-
     N_digits_pono <- stringr::str_length(df$pono[1])
     
     pono_map <- 
-      left_join(df, mutate(postinumero_map, pono = stringr::str_sub(pono, 1, N_digits_pono)), 
+      left_join(df, mutate(map, pono = stringr::str_sub(pono, 1, N_digits_pono)), 
                 by = c("pono"))
     
-    p <- ggplot(data = arrange(pono_map, order), aes(x = long, y = lat)) + 
+    p <- ggplot(data = pono_map, aes(x = long, y = lat)) + 
       geom_polygon_interactive(aes_string(fill = attr_to_plot, group = "group", tooltip="tooltip"), colour = NA) + 
       theme_void() +
       theme(legend.title = element_blank()) + 
@@ -101,12 +138,12 @@ map_fi_postinumero_interactive <-
     
     p <- p + colorscale(...)
     
-    p <- p + coord_equal(ratio=2.1) 
+    p <- p + coord_equal(ratio = lat_long_ratio) 
     return(p)
   }
 
 
-paavo_diff <- function(paavo_df, years = c(2018, 2015)) {
+paavo_diff <- function(paavo_df, years = c(2019, 2015)) {
   # paavo_df is a Paavo data frame from createPaavodata either paavo$counts or paavo$proportions
   # The function returns difference between years: default is 2018-2015
   # 'vuosi' variable will contain the years from which differences are computed 

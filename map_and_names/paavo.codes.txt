@@ -1,0 +1,111 @@
+nimi;koodi;paavo.vuosi.offset;aggr;weight;ratio.base
+Postal area name;nimi;;;;
+Zip code;pono;;;;
+Year of Paavo data;vuosi;;;;
+Area;pinta_ala;;sum;;
+X coordinate;euref_x;;min;;
+Y coordiante;euref_y;;min;;
+Commune number;kuntano;;min;;
+Inhabitants HE;he_vakiy;-2;sum;;
+Females HE;he_naiset;-2;sum;;he_vakiy
+Males HE;he_miehet;-2;sum;;he_vakiy
+Average age of inhabitants HE;he_kika;-2;mean;he_vakiy;
+0-2 years HE;he_0_2;-2;sum;;he_vakiy
+3-6 years HE;he_3_6;-2;sum;;he_vakiy
+7-12 years HE;he_7_12;-2;sum;;he_vakiy
+13-15 years HE;he_13_15;-2;sum;;he_vakiy
+16-17 years HE;he_16_17;-2;sum;;he_vakiy
+18-19 years HE;he_18_19;-2;sum;;he_vakiy
+20-24 years HE;he_20_24;-2;sum;;he_vakiy
+25-29 years HE;he_25_29;-2;sum;;he_vakiy
+30-34 years HE;he_30_34;-2;sum;;he_vakiy
+35-39 years HE;he_35_39;-2;sum;;he_vakiy
+40-44 years HE;he_40_44;-2;sum;;he_vakiy
+45-49 years HE;he_45_49;-2;sum;;he_vakiy
+50-54 years HE;he_50_54;-2;sum;;he_vakiy
+55-59 years HE;he_55_59;-2;sum;;he_vakiy
+60-64 years HE;he_60_64;-2;sum;;he_vakiy
+65-69 years HE;he_65_69;-2;sum;;he_vakiy
+70-74 years HE;he_70_74;-2;sum;;he_vakiy
+75-79 years HE;he_75_79;-2;sum;;he_vakiy
+80-84 years HE;he_80_84;-2;sum;;he_vakiy
+85- years HE;he_85_;-2;sum;;he_vakiy
+Aged 18 or over, total KO;ko_ika18y;-3;sum;;
+Basic level studies KO;ko_perus;-3;sum;;ko_ika18y
+With education, total KO;ko_koul;-3;sum;;ko_ika18y
+Matriculation examinantion KO;ko_yliop;-3;sum;;ko_ika18y
+Vocational diploma KO;ko_ammat;-3;sum;;ko_ika18y
+Lower level university degree KO;ko_al_kork;-3;sum;;ko_ika18y
+Higher level university degree KO;ko_yl_kork;-3;sum;;ko_ika18y
+Aged 18 or over, total HR;hr_tuy;-3;sum;;
+Average income of inhabitants HR;hr_ktu;-3;mean;hr_tuy;
+Median income of inhabitants HR;hr_mtu;-3;mean;hr_tuy;
+Lowest income category HR;hr_pi_tul;-3;sum;;hr_tuy
+Middle income category HR;hr_ke_tul;-3;sum;;hr_tuy
+Highest income category HR;hr_hy_tul;-3;sum;;hr_tuy
+Accumulated purchasing power of inhabitants HR;hr_ovy;-3;sum;;
+Households, total TE;te_taly;-2;sum;;
+Average size of households TE;te_takk;-2;mean;te_taly;
+Occupancy rate TE;te_as_valj;-2;mean;te_taly;
+Young single persons’ households TE;te_nuor;-2;sum;;te_taly
+Young couples without children TE;te_eil_np;-2;sum;;te_taly
+Households with children TE;te_laps;-2;sum;;te_taly
+Households with small children TE;te_plap;-2;sum;;te_taly
+Households with children under school age TE;te_aklap;-2;sum;;te_taly
+Households with school-aged children TE;te_klap;-2;sum;;te_taly
+Households with teenagers TE;te_teini;-2;sum;;te_taly
+Adult households TE;te_aik;-2;sum;;te_taly
+Pensioner households TE;te_elak;-2;sum;;te_taly
+Households living in owner-occupied dwellings TE;te_omis_as;-2;sum;;te_taly
+Households living in rental dwellings TE;te_vuok_as;-2;sum;;te_taly
+Households living in other dwellings TE;te_muu_as;-2;sum;;te_taly
+Income recipient households, total TR;tr_kuty;-3;sum;;
+Average income of households TR;tr_ktu;-3;mean;tr_kuty;
+Median income of households TR;tr_mtu;-3;mean;tr_kuty;
+Lowest income category TR;tr_pi_tul;-3;sum;;tr_kuty
+Middle income category TR;tr_ke_tul;-3;sum;;tr_kuty
+Highest income category TR;tr_hy_tul;-3;sum;;tr_kuty
+Accumulated purchasing power of households TR;tr_ovy;-3;sum;;
+Free-time residences, total RA;ra_ke;-2;sum;;ra_raky+ra_ke
+Buildings, total RA;ra_raky;-2;sum;;
+Other buildings RA;ra_muut;-2;sum;;ra_raky
+Residential buildings RA;ra_asrak;-2;sum;;ra_raky
+Dwellings RA;ra_asunn;-2;sum;;
+Average floor area RA;ra_as_kpa;-2;mean;ra_asunn;
+Dwellings in small houses RA;ra_pt_as;-2;sum;;ra_asunn
+Dwellings in blocks of flats RA;ra_kt_as;-2;sum;;ra_asunn
+Workplaces, total TP;tp_tyopy;-3;sum;;
+Primary production TP;tp_alku_a;-3;sum;;tp_tyopy
+Processing TP;tp_jalo_bf;-3;sum;;tp_tyopy
+Services TP;tp_palv_gu;-3;sum;;tp_tyopy
+A Agriculture, forestry and fishing TP;tp_a_maat;-3;sum;;tp_tyopy
+B Mining and quarrying TP;tp_b_kaiv;-3;sum;;tp_tyopy
+C Manufacturing TP;tp_c_teol;-3;sum;;tp_tyopy
+D Electricity, gas, steam and air conditioning supply TP;tp_d_ener;-3;sum;;tp_tyopy
+E Water supply, sewerage, waste management TP;tp_e_vesi;-3;sum;;tp_tyopy
+F Construction TP;tp_f_rake;-3;sum;;tp_tyopy
+G Wholesale and retail trade, repair of motor vehicles TP;tp_g_kaup;-3;sum;;tp_tyopy
+H Transportation and storage TP;tp_h_kulj;-3;sum;;tp_tyopy
+I Accommodation and food service activities TP;tp_i_majo;-3;sum;;tp_tyopy
+J Information and communication TP;tp_j_info;-3;sum;;tp_tyopy
+K Financial and insurance activities TP;tp_k_raho;-3;sum;;tp_tyopy
+L Real estate activities TP;tp_l_kiin;-3;sum;;tp_tyopy
+M Professional, scientific and technical activities TP;tp_m_erik;-3;sum;;tp_tyopy
+N Administrative and support service activities TP;tp_n_hall;-3;sum;;tp_tyopy
+O Public administration and defence TP;tp_o_julk;-3;sum;;tp_tyopy
+P Education TP;tp_p_koul;-3;sum;;tp_tyopy
+Q Human health and social work activities TP;tp_q_terv;-3;sum;;tp_tyopy
+R Arts, entertainment and recreation TP;tp_r_taid;-3;sum;;tp_tyopy
+R Arts, entertainment and recreation TP;tp_s_muup;-3;sum;;tp_tyopy
+T Activities of households as employers TP;tp_t_koti;-3;sum;;tp_tyopy
+U Activities of extraterritorial organisations and bodies TP;tp_u_kans;-3;sum;;tp_tyopy
+X Industry unknown TP;tp_x_tunt;-3;sum;;tp_tyopy
+Inhabitants PT;pt_vakiy;-3;sum;;
+Labour force PT;pt_tyovy;-3;sum;;pt_vakiy
+Employed PT;pt_tyoll;-3;sum;;pt_vakiy
+Unemployed PT;pt_tyott;-3;sum;;pt_vakiy
+Persons outside the labour force PT;pt_tyovu;-3;sum;;pt_vakiy
+Children aged 0-14 years PT;pt_0_14;-3;sum;;pt_vakiy
+Students PT;pt_opisk;-3;sum;;pt_vakiy
+Pensioners PT;pt_elakel;-3;sum;;pt_vakiy
+Others PT;pt_muut;-3;sum;;pt_vakiy

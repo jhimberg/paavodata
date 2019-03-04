@@ -143,25 +143,3 @@ map_fi_zipcode_interactive <-
   }
 
 
-paavo_diff <- function(paavo_df, years = c(2019, 2015)) {
-  # paavo_df is a Paavo data frame from createPaavodata either paavo$counts or paavo$proportions
-  # The function returns difference between years: default is 2018-2015
-  # 'vuosi' variable will contain the years from which differences are computed 
-  # eg. 2018-2015
-
-  diff_attributes <- setdiff(paavo$vars$koodi, c("nimi", "pono", "vuosi", "euref_x", "euref_y", "kuntano")) 
-  
-  paavo <- paavo_df %>%
-    group_by(pono, pono_level) %>%
-    arrange(vuosi) %>%
-    filter(vuosi %in% years) %>%
-    mutate_at(vars(diff_attributes), funs(. - lag(.))) %>%
-    mutate(diff = paste0(vuosi, "-", lag(vuosi))) %>%
-    filter(vuosi > min(years)) %>%
-    ungroup
-  
-  return(paavo)
-}
-
-
-

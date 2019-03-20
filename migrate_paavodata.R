@@ -1,36 +1,4 @@
-
-#' Gets data from Statistics Finland GeoServer
-#'
-#' @param data_name the name of GeoServer data file in http://geo.stat.fi/geoserver, default "postialue:pno_tilasto_2015"
-#' @param name_ext the extension of the file, default ".shp"
-#' @param get_geometry TRUE (default) or FALSE, whether to get the geomertry or not
-#'
-#' @return The GeoServer data in a data frame 
-#' @export 
-#'
-#' @examples df <- get_geo("postialue:pno_tilasto_2019", get_geometry = FALSE)
-get_geo <-function(data_name = "postialue:pno_tilasto_2015", name_ext = ".shp", get_geometry = TRUE) {
-  
-  data_file <- paste0(tempdir(), "/", str_split_fixed(data_name, pattern=":", n = 2)[2])
-  url_head <- "http://geo.stat.fi/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName="
-  url_tail <- "&outputFormat=SHAPE-ZIP"
-  zip_file <- paste(tempdir(), "/", "shape.zip", sep = "")
-  curl::curl_download(paste(url_head, data_name, url_tail, sep = ""), zip_file)
-  unzip(zip_file, exdir = tempdir())  
-  
-  geodata <- sf::st_read(paste(tempdir(), "/", str_split_fixed(data_name, pattern = ":", n = 2)[2], name_ext, sep = ""), 
-                         quiet = TRUE, 
-                         stringsAsFactors = FALSE) %>% 
-    as.data.frame(., stringsAsFactors = FALSE) %>% 
-    mutate_if(is.character, function(x) iconv(x, from = "latin1", to="UTF-8"))
-  
-   geodata <- if (get_geometry) 
-     geodata 
-   else 
-     select(geodata, -geometry)
-  
-   return(geodata)
-}
+source(here::here("utilities.R"))
 
 # Paavo-data (Zip code demographics data)
 Data <- bind_rows(get_geo("postialue:pno_tilasto_2019", get_geometry = FALSE),

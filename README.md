@@ -35,7 +35,7 @@ Note: the data frame contains also a few continuous variables such as average ag
 
 ### Variable explanations
 
-The offsets, variable explanations, and attribute names are in `map_and_names/paavo.codes.txt`. This is an attempt to collect the information in https://www.stat.fi/tup/paavo/paavon_aineistokuvaukset_en.html . Note that this partly configures the computation of the sums and averages, partly that is done hard-wired in the code. 
+The offsets, variable explanations, and attribute names are in `map_and_names/paavo.codes.txt`. This is an attempt to collect the information in https://www.stat.fi/tup/paavo/paavon_aineistokuvaukset_en.html. Note that this partly configures the computation of the sums and averages, partly that is done hard-wired in the code. 
 
 ### Maps
 
@@ -43,10 +43,10 @@ The offsets, variable explanations, and attribute names are in `map_and_names/pa
 
 *Postal code area boundaries, Statistics Finland The material was downloaded from Statistics Finland's interface service on Mar 3 2019, with the licence CC BY 4.0.*
 
-There are example functions in `utilities.R` for plotting a map using any of the aggregation levels. They use polygons in `map_and_names/statfi_reduced_ziparea_map_20??.rds`. These are originally from the same source as the Paavo data (http://geo.stat.fi). The original shape files have been transformed into so reduced by resolution - and smallest island have been removed (see `map_and_names/statfi_reduced_ziparea_map_20??.rds`). The remaining polygons have been rewritten as a data frame that can be printed by `ggplot2::geom_polygon`. (The original shapefiles can be plotted using `geom_sf` slower). 
+There are example functions in `utilities.R` for plotting a map using any of the aggregation levels. They use polygons in `map_and_names/statfi_reduced_ziparea_map_20??.rds`. These are originally from the same source as the Paavo data (http://geo.stat.fi). The original shape files have been transformed into so reduced by resolution - and smallest island have been removed (see `map_and_names/statfi_reduced_ziparea_map_20??.rds`). The remaining polygons have been rewritten as a data frame that can be printed by `ggplot2::geom_polygon`. (The original shapefiles can be plotted using `geom_sf` which suits better for map data, however, at least with ggplot2 3.1.0 in OSX it has been considerably slower) 
 
 `map_and_names/pono_polygons_by_Duukkis_CCBY4.0_20150102.rds` (under Creative Commons CC BY 4.0) are zip code polygons from Duukkis http://www.palomaki.info/apps/pnro/ that have been converted into a data frame that can be used by `ggplot2` function `geom_polygon`. 
-  - Cons: It is inconsisten with some of the newer zipcode areas
+  - Cons: It is inconsistent with some of the newer zipcode areas
   - Pros: the polygons are better reduced compared to the polygons that are in `statfi_reduced_ziparea_map_2015.rds`
   
 ### Commune/city numbers 

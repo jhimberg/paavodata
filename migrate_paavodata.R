@@ -1,7 +1,15 @@
-## Function gets Paavo data from statistics Finland
-## This data contains also the polygons needed for drawing the polygons but it's not used here
 
-get_geo <-function(data_name = "tilastointialueet:kunta4500k_2017", name_ext = ".shp", get_geometry = FALSE) {
+#' Gets data from Statistics Finland GeoServer
+#'
+#' @param data_name the name of GeoServer data file in http://geo.stat.fi/geoserver, default "postialue:pno_tilasto_2015"
+#' @param name_ext the extension of the file, default ".shp"
+#' @param get_geometry TRUE (default) or FALSE, whether to get the geomertry or not
+#'
+#' @return The GeoServer data in a data frame 
+#' @export 
+#'
+#' @examples df <- get_geo("postialue:pno_tilasto_2019", get_geometry = FALSE)
+get_geo <-function(data_name = "postialue:pno_tilasto_2015", name_ext = ".shp", get_geometry = TRUE) {
   
   data_file <- paste0(tempdir(), "/", str_split_fixed(data_name, pattern=":", n = 2)[2])
   url_head <- "http://geo.stat.fi/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName="
@@ -25,11 +33,11 @@ get_geo <-function(data_name = "tilastointialueet:kunta4500k_2017", name_ext = "
 }
 
 # Paavo-data (Zip code demographics data)
-Data <- bind_rows(get_geo("postialue:pno_tilasto_2019"),
-                  get_geo("postialue:pno_tilasto_2018"), 
-                  get_geo("postialue:pno_tilasto_2017"),
-                  get_geo("postialue:pno_tilasto_2016"),
-                  get_geo("postialue:pno_tilasto_2015")) %>%
+Data <- bind_rows(get_geo("postialue:pno_tilasto_2019", get_geometry = FALSE),
+                  get_geo("postialue:pno_tilasto_2018", get_geometry = FALSE), 
+                  get_geo("postialue:pno_tilasto_2017", get_geometry = FALSE),
+                  get_geo("postialue:pno_tilasto_2016", get_geometry = FALSE),
+                  get_geo("postialue:pno_tilasto_2015", get_geometry = FALSE)) %>%
   select(-namn, 
          -objectid) %>% 
   rename(pono = posti_alue, 

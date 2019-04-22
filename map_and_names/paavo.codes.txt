@@ -1,4 +1,4 @@
-nimi;koodi;paavo.vuosi.offset;aggr;weight;ratio.base
+name;koodi;paavo.vuosi.offset;aggr;weight;ratio.base
 Postal area name;nimi;;;;
 Zip code;pono;;;;
 Year of Paavo data;vuosi;;;;

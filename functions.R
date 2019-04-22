@@ -5,7 +5,6 @@ library(stringr)
 library(ggplot2)
 library(ggiraph)
 
-
 #' Gets data from Statistics Finland GeoServer
 #'
 #' @param data_name the name of GeoServer data file in http://geo.stat.fi/geoserver, default "postialue:pno_tilasto_2015"
@@ -59,7 +58,7 @@ fi_commune_number2name <- function(kuntano) {
 }
 
 # produces names for aggregated areas 
-collapse_names <- function(digits = 3, df = paavo$counts) 
+collapse_names <- function(digits = 3, df = paavo$data) 
   filter(df, pono_level == 5) %>% 
   select(pono, kuntano, vuosi, nimi) %>% 
   mutate(kunta = fi_commune_number2name(kuntano), 
@@ -181,4 +180,6 @@ map_fi_zipcode_interactive <-
     return(p)
   }
 
+# Move columns in a data frame
+order_columns <- function(df, first_names) select(df, one_of(c(first_names, setdiff(names(df), first_names))))
 

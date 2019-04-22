@@ -2,8 +2,8 @@
 # Create first Paavo-data 
 # source("migrate_paavodata".R") 
 
-# Initialise graph functions 
-#source("utilities.R")
+# Initialise graph functions - these are done in example 1 
+#source("functions.R")
 #paavo <- readRDS(here::here("paavodata.rds"))
 
 #### Example 2: Helsinki, "duukkkis" polygons (2015), viridis colorscale + labels
@@ -27,7 +27,7 @@ variable_year <- paavo_year + filter(paavo$vars, koodi == variable_code)$paavo.v
 latlong <- group_by(readRDS(file=here("map_and_names", "pono_polygons_by_Duukkis_CC_BY4.0_20150102.rds")), pono) %>% 
   summarise(long = mean(long), lat = mean(lat))
 
-df <- filter(paavo$counts, grepl("^00", pono) & pono_level == zip_digits & vuosi == paavo_year) %>%
+df <- filter(paavo$data, grepl("^00", pono) & pono_level == zip_digits & vuosi == paavo_year) %>%
   select_("pono", variable_code, "nimi") %>%
   left_join(., latlong, by = "pono")
 

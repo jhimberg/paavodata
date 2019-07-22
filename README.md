@@ -1,16 +1,14 @@
 # paavodata
 
-Get Statistics Finland Paavo-demographics and visualise them. There are migration scripts for getting data into a data frame, aggregation of data to larger geographical areas (2 and 3 first digits), and computing weighted proportions / averages for the counts.  
+Get Statistics Finland "Paavo" demographics (https://www.stat.fi/tup/paavo/paavon_aineistokuvaukset_en.html) and visualise them. There are migration scripts for getting data into a data frame, aggregation of data to larger geographical areas (2 and 3 first digits), and computing weighted proportions / averages for the counts.  
 
 There are examples how to visualise the data by `ggplot` and preloaded maps (polygons) for zip code areas.
-
-Data: https://www.stat.fi/tup/paavo/paavon_aineistokuvaukset_en.html
 
 ## Fetching and averaging Paavo data
 
 `migrate_paavodata.R` collects data from Statistics Finland and stores them into a list of data frames and stores the results into local directory as a list consisting of data frames. Collects now data for 2015-2019. Adding new year is easy (see code) if the data format stays the same. 
 
-  - original Paavo-data attributes are documented by Statistics Finland https://www.stat.fi/tup/paavo/paavon_aineistokuvaukset_en.html
+  - original Paavo-data attributes are [!documented by Statistics Finland| https://www.stat.fi/tup/paavo/paavon_aineistokuvaukset_en.html]
   - Additional attributes
     - Column `pono.level` (2,3, or 5) indicates the aggreation level
     -  `vuosi` (year) the year of Paavo data. Note that the actual statistics is older - the year (statistics is from the end of year) is found in Statistics Finland documentation (and also in paavo.vars)
